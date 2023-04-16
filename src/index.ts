@@ -1,6 +1,11 @@
-import { UserForm } from './views/UserForm'
+import { UserList } from './views/UserList'
 import { User } from './models/User'
 
-const user = User.buildUser({ name: 'MY NAME', age: 20, id: 1 })
-const userForm = new UserForm(document.getElementById('root')!, user)
-userForm.render()
+const userCollection = User.buildUserCollection()
+
+userCollection.on('change', () => {
+  const rootElement = document.getElementById('root')
+  new UserList(rootElement, userCollection).render()
+})
+
+userCollection.fetch()

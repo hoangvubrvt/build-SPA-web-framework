@@ -1,55 +1,44 @@
-import { type User } from '../models/User'
+import { type User, type UserProp } from '../models/User'
+import { View } from './View'
 
-export class UserForm {
-  constructor (public parent: Element, public user: User) {
-  }
-
+export class UserForm extends View<User, UserProp> {
   eventsMap = (): Record<string, () => void> => {
     return {
-      'click:button': this.onButtonClick,
-      'mouseenter:h1': this.onHoverTitle
+      'click:.set-name': this.onChangeNameButtonClick,
+      'click:.set-random': this.onSetRandomAgeClick,
+      'click:.save-user': this.onSaveUserClick
+
     }
   }
 
-  onButtonClick = (): void => {
-    console.log('Hello there!')
+  onSaveUserClick = (): void => {
+    this.model.save()
+  }
+
+  onChangeNameButtonClick = (): void => {
+    const input = this.parent.querySelector('input')
+    this.model.set({ name: input.value })
+    input.value = ''
   }
 
   onHoverTitle = (): void => {
     console.log('on Hover Title')
   }
 
-  bindEvents = (elementFragment: DocumentFragment): void => {
-    const eventsMap = this.eventsMap()
-    Object.keys(eventsMap).forEach((eventKey: string) => {
-      const [eventName, selection] = eventKey.split(':')
-
-      elementFragment.querySelectorAll(selection).forEach(element => {
-        element.addEventListener(eventName, eventsMap[eventKey])
-      })
-    })
+  onSetRandomAgeClick = (): void => {
+    const randomAge = Math.round(Math.random() * 100)
+    this.model.set({ age: randomAge })
   }
 
   template = (): string => {
-    console.log(this.user.get('name'))
-    const userData = this.user.getData()
+    const userData = this.model.getData()
     return `
         <div>
-            <h1>User Form</h1>
-            <div>
-                <div>User Name: ${userData.name}</div>
-                <div>User Age: ${userData.age}</div>
-            </div>
-            <input/>
-            <button>Say Hi!</button>
+            <input placeholder="${userData.name}"/>
+            <button class="set-name">Change Name</button>
+            <button class="set-random">Set Random Age</button>
+            <button class="save-user">Save User</button>
         </div>
     `
-  }
-
-  render = (): void => {
-    const templateElement = document.createElement('template')
-    templateElement.innerHTML = this.template()
-    this.bindEvents(templateElement.content)
-    this.parent.replaceWith(templateElement.content)
   }
 }

@@ -5,7 +5,7 @@ import { ApiSync } from './ApiSync'
 import { Model } from './Model'
 import { Collection } from './Collection'
 
-interface UserProp {
+export interface UserProp {
   id?: number
   name?: string
   age?: number
@@ -15,10 +15,8 @@ const ROOT_URL = 'http://localhost:3000/users'
 
 export class User extends Model<UserProp> {
   static buildUser (userData: UserProp): User {
-    const attribute = new Attribute<UserProp>(userData)
-    console.log('user attribute ', attribute.getData())
     return new User(
-      attribute,
+      new Attribute<UserProp>(userData),
       new ApiSync<UserProp>(ROOT_URL),
       new Event()
     )

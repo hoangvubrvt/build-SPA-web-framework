@@ -19,6 +19,12 @@ interface HasId {
   id?: number
 }
 
+enum MODEL_EVENT_NAME {
+  CHANGE = 'change',
+  SAVE = 'save',
+  ERROR = 'error'
+}
+
 export class Model<T extends HasId> {
   constructor (
     public modelAttribute: ModelAttribute<T>,
@@ -26,11 +32,12 @@ export class Model<T extends HasId> {
     public events: Events
   ) {}
 
-  get set () {
-    return this.modelAttribute.set
+  set = (data: T): void => {
+    this.modelAttribute.set(data)
+    this.trigger(MODEL_EVENT_NAME.CHANGE)
   }
 
-  getData () {
+  getData = (): T => {
     return this.modelAttribute.getData()
   }
 
@@ -53,9 +60,9 @@ export class Model<T extends HasId> {
   save (): void {
     const data = this.getData()
     void this.apiSync.save(data).then(() => {
-      this.events.trigger('save')
+      this.events.trigger(MODEL_EVENT_NAME.SAVE)
     }).catch(() => {
-      this.events.trigger('error')
+      this.events.trigger(MODEL_EVENT_NAME.ERROR)
     })
   }
 }
