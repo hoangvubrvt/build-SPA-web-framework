@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:parcel": "parcel index.html",
     "start:db": "json-server -w db.json",
+    "start": "concurrently 'npm run start:parcel' 'npm run start:db'",
     "build": "tsc",
     "eslint:fix": "eslint --fix .",
     "prepare": "husky install"
@@ -18,6 +19,7 @@
     "@tsconfig/strictest": "^1.0.2",
     "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "concurrently": "^8.0.1",
     "eslint": "^8.38.0",
     "eslint-config-standard-with-typescript": "^34.0.1",
     "eslint-plugin-import": "^2.27.5",
